@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = 'https://banco-de-alimentos-rou6.onrender.com';
 
 async function apiGet(path) {
     const res = await fetch(`${BASE_URL}${path}`);
