@@ -1,11 +1,13 @@
+let donacionEditandoId = null;
+
 async function cargarDonaciones() {
     const tbody = document.querySelector('#tabla-donaciones tbody');
-    tbody.innerHTML = '<tr><td colspan="5">Cargando...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6">Cargando...</td></tr>';
     try {
         const data = await apiGet('/donaciones');
         tbody.innerHTML = '';
         if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5">Sin registros</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6">Sin registros</td></tr>';
             return;
         }
         data.forEach(d => {
@@ -16,11 +18,14 @@ async function cargarDonaciones() {
                 <td>${d.nombreDonante}</td>
                 <td>${d.tipoDonante}</td>
                 <td>${d.totalItems}</td>
-                <td><button class="btn btn-danger btn-sm" onclick="eliminarDonacion(${d.id})">Eliminar</button></td>
+                <td>
+                    <button class="btn btn-warning btn-sm me-1" onclick="editarDonacion(${d.id}, ${d.totalItems})">Editar</button>
+                    <button class="btn btn-danger btn-sm" onclick="eliminarDonacion(${d.id})">Eliminar</button>
+                </td>
             </tr>`;
         });
     } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="5">Error al cargar</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6">Error al cargar</td></tr>';
     }
 }
 
@@ -31,6 +36,23 @@ async function cargarSelectDonantes() {
     data.forEach(d => {
         sel.innerHTML += `<option value="${d.id}">${d.nombreDonante}</option>`;
     });
+}
+
+function editarDonacion(id, totalItems) {
+    donacionEditandoId = id;
+    document.getElementById('don-items').value = totalItems;
+    document.getElementById('don-donante').disabled = true;
+    document.getElementById('btn-donacion').textContent = 'Actualizar';
+    document.getElementById('btn-cancelar-donacion').classList.remove('d-none');
+    document.getElementById('don-items').scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelarDonacion() {
+    donacionEditandoId = null;
+    document.getElementById('form-donacion').reset();
+    document.getElementById('don-donante').disabled = false;
+    document.getElementById('btn-donacion').textContent = 'Registrar';
+    document.getElementById('btn-cancelar-donacion').classList.add('d-none');
 }
 
 async function eliminarDonacion(id) {
@@ -46,16 +68,23 @@ async function eliminarDonacion(id) {
 
 document.getElementById('form-donacion').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const body = {
-        donanteId: parseInt(document.getElementById('don-donante').value),
-        totalItems: parseInt(document.getElementById('don-items').value),
-    };
     try {
-        await apiPost('/donaciones', body);
-        showToast('Donación registrada');
-        e.target.reset();
+        if (donacionEditandoId) {
+            await apiPut(`/donaciones/${donacionEditandoId}`, {
+                totalItems: parseInt(document.getElementById('don-items').value)
+            });
+            showToast('Donación actualizada');
+            cancelarDonacion();
+        } else {
+            await apiPost('/donaciones', {
+                donanteId: parseInt(document.getElementById('don-donante').value),
+                totalItems: parseInt(document.getElementById('don-items').value),
+            });
+            showToast('Donación registrada');
+            e.target.reset();
+        }
         cargarDonaciones();
     } catch (err) {
-        showToast('Error al registrar', 'error');
+        showToast('Error al guardar', 'error');
     }
 });

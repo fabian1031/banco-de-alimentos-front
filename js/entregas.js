@@ -1,11 +1,13 @@
+let entregaEditandoId = null;
+
 async function cargarEntregas() {
     const tbody = document.querySelector('#tabla-entregas tbody');
-    tbody.innerHTML = '<tr><td colspan="5">Cargando...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7">Cargando...</td></tr>';
     try {
         const data = await apiGet('/entregas');
         tbody.innerHTML = '';
         if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5">Sin registros</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7">Sin registros</td></tr>';
             return;
         }
         data.forEach(e => {
@@ -17,11 +19,14 @@ async function cargarEntregas() {
                 <td>${e.nivelVulnerabilidad}</td>
                 <td>${e.nombreTrabajador}</td>
                 <td>${e.observaciones || '-'}</td>
-                <td><button class="btn btn-danger btn-sm" onclick="eliminarEntrega(${e.id})">Eliminar</button></td>
+                <td>
+                    <button class="btn btn-warning btn-sm me-1" onclick="editarEntrega(${e.id}, '${e.observaciones || ''}')">Editar</button>
+                    <button class="btn btn-danger btn-sm" onclick="eliminarEntrega(${e.id})">Eliminar</button>
+                </td>
             </tr>`;
         });
     } catch (err) {
-        tbody.innerHTML = '<tr><td colspan="5">Error al cargar</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7">Error al cargar</td></tr>';
     }
 }
 
@@ -44,6 +49,25 @@ async function cargarSelectsBeneficiariosTrabajadores() {
     });
 }
 
+function editarEntrega(id, observaciones) {
+    entregaEditandoId = id;
+    document.getElementById('e-observaciones').value = observaciones;
+    document.getElementById('e-beneficiario').disabled = true;
+    document.getElementById('e-trabajador').disabled = true;
+    document.getElementById('btn-entrega').textContent = 'Actualizar';
+    document.getElementById('btn-cancelar-entrega').classList.remove('d-none');
+    document.getElementById('e-observaciones').scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelarEntrega() {
+    entregaEditandoId = null;
+    document.getElementById('form-entrega').reset();
+    document.getElementById('e-beneficiario').disabled = false;
+    document.getElementById('e-trabajador').disabled = false;
+    document.getElementById('btn-entrega').textContent = 'Registrar';
+    document.getElementById('btn-cancelar-entrega').classList.add('d-none');
+}
+
 async function eliminarEntrega(id) {
     if (!confirm('¿Eliminar entrega?')) return;
     try {
@@ -57,17 +81,24 @@ async function eliminarEntrega(id) {
 
 document.getElementById('form-entrega').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const body = {
-        beneficiarioId: parseInt(document.getElementById('e-beneficiario').value),
-        trabajadorId: parseInt(document.getElementById('e-trabajador').value),
-        observaciones: document.getElementById('e-observaciones').value,
-    };
     try {
-        await apiPost('/entregas', body);
-        showToast('Entrega registrada');
-        e.target.reset();
+        if (entregaEditandoId) {
+            await apiPut(`/entregas/${entregaEditandoId}`, {
+                observaciones: document.getElementById('e-observaciones').value
+            });
+            showToast('Entrega actualizada');
+            cancelarEntrega();
+        } else {
+            await apiPost('/entregas', {
+                beneficiarioId: parseInt(document.getElementById('e-beneficiario').value),
+                trabajadorId: parseInt(document.getElementById('e-trabajador').value),
+                observaciones: document.getElementById('e-observaciones').value,
+            });
+            showToast('Entrega registrada');
+            e.target.reset();
+        }
         cargarEntregas();
     } catch (err) {
-        showToast('Error al registrar', 'error');
+        showToast('Error al guardar', 'error');
     }
 });

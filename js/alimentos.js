@@ -1,3 +1,5 @@
+let alimentoEditandoId = null;
+
 async function cargarAlimentos() {
     const tbody = document.querySelector('#tabla-alimentos tbody');
     tbody.innerHTML = '<tr><td colspan="7">Cargando...</td></tr>';
@@ -20,12 +22,33 @@ async function cargarAlimentos() {
                 <td>${a.fechaVencimiento}</td>
                 <td>${a.unidadMedida}</td>
                 <td>${badge}</td>
-                <td><button class="btn btn-danger btn-sm" onclick="eliminarAlimento(${a.id})">Eliminar</button></td>
+                <td>
+                    <button class="btn btn-warning btn-sm me-1" onclick="editarAlimento(${a.id}, '${a.nombreAlimento}', '${a.tipo}', '${a.fechaVencimiento}', '${a.unidadMedida}')">Editar</button>
+                    <button class="btn btn-danger btn-sm" onclick="eliminarAlimento(${a.id})">Eliminar</button>
+                </td>
             </tr>`;
         });
     } catch (e) {
         tbody.innerHTML = '<tr><td colspan="7">Error al cargar</td></tr>';
     }
+}
+
+function editarAlimento(id, nombre, tipo, vencimiento, unidad) {
+    alimentoEditandoId = id;
+    document.getElementById('a-nombre').value = nombre;
+    document.getElementById('a-tipo').value = tipo;
+    document.getElementById('a-vencimiento').value = vencimiento;
+    document.getElementById('a-unidad').value = unidad;
+    document.getElementById('btn-alimento').textContent = 'Actualizar';
+    document.getElementById('btn-cancelar-alimento').classList.remove('d-none');
+    document.getElementById('a-nombre').scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelarAlimento() {
+    alimentoEditandoId = null;
+    document.getElementById('form-alimento').reset();
+    document.getElementById('btn-alimento').textContent = 'Registrar';
+    document.getElementById('btn-cancelar-alimento').classList.add('d-none');
 }
 
 async function eliminarAlimento(id) {
@@ -48,11 +71,17 @@ document.getElementById('form-alimento').addEventListener('submit', async (e) =>
         unidadMedida: document.getElementById('a-unidad').value,
     };
     try {
-        await apiPost('/alimentos', body);
-        showToast('Alimento registrado');
-        e.target.reset();
+        if (alimentoEditandoId) {
+            await apiPut(`/alimentos/${alimentoEditandoId}`, body);
+            showToast('Alimento actualizado');
+            cancelarAlimento();
+        } else {
+            await apiPost('/alimentos', body);
+            showToast('Alimento registrado');
+            e.target.reset();
+        }
         cargarAlimentos();
     } catch (err) {
-        showToast('Error al registrar', 'error');
+        showToast('Error al guardar', 'error');
     }
 });
