@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Banco de Alimentos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+
+    <header class="px-4 py-3">
+        <h1 class="mb-0">Banco de Alimentos</h1>
+        <small>Sistema de gestión de donaciones y entregas</small>
+    </header>
+
+    <nav class="px-4">
+        <button class="active" onclick="mostrarSeccion('alimentos', this)">Alimentos</button>
+        <button onclick="mostrarSeccion('donantes', this)">Donantes</button>
+        <button onclick="mostrarSeccion('donaciones', this)">Donaciones</button>
+        <button onclick="mostrarSeccion('beneficiarios', this)">Beneficiarios</button>
+        <button onclick="mostrarSeccion('trabajadores', this)">Trabajadores</button>
+        <button onclick="mostrarSeccion('entregas', this)">Entregas</button>
+    </nav>
+
+    <main class="container-lg py-4">
+
+        <section id="sec-alimentos" class="section active">
+            <h2 class="section-title">Alimentos</h2>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-3">Registrar alimento</h6>
+                    <form id="form-alimento">
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Nombre</label>
+                                <input id="a-nombre" type="text" class="form-control form-control-sm" required
+                                    placeholder="Ej: Arroz" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Tipo</label>
+                                <select id="a-tipo" class="form-select form-select-sm" required>
+                                    <option value="">Seleccione</option>
+                                    <option value="ENLATADO">Enlatado</option>
+                                    <option value="GRANO">Grano</option>
+                                    <option value="LACTEO">Lácteo</option>
+                                    <option value="VERDURA">Verdura</option>
+                                    <option value="OTRO">Otro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Fecha de vencimiento</label>
+                                <input id="a-vencimiento" type="date" class="form-control form-control-sm" required />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Unidad de medida</label>
+                                <select id="a-unidad" class="form-select form-select-sm" required>
+                                    <option value="">Seleccione</option>
+                                    <option value="KG">Kilogramo (KG)</option>
+                                    <option value="LITRO">Litro</option>
+                                    <option value="UNIDAD">Unidad</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Registrar</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-3">Listado de alimentos</h6>
+                    <div class="table-responsive">
+                        <table id="tabla-alimentos" class="table table-sm table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Tipo</th>
+                                    <th>Vencimiento</th>
+                                    <th>Unidad</th>
+                                    <th>Apto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-donantes" class="section">
+            <h2 class="section-title">Donantes</h2>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-3">Registrar donante</h6>
+                    <form id="form-donante">
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Nombre</label>
+                                <input id="d-nombre" type="text" class="form-control form-control-sm" required
+                                    placeholder="Nombre o empresa" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Tipo</label>
+                                <select id="d-tipo" class="form-select form-select-sm" required>
+                                    <option value="">Seleccione</option>
+                                    <option value="PERSONA_NATURAL">Persona natural</option>
+                                    <option value="EMPRESA">Empresa</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">NIT / Documento</label>
+                                <input id="d-nit" type="text" class="form-control form-control-sm"
+                                    placeholder="Opcional" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Teléfono</label>
+                                <input id="d-telefono" type="text" class="form-control form-control-sm"
+                                    placeholder="Opcional" />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Registrar</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-3">Listado de donantes</h6>
+                    <div class="table-responsive">
+                        <table id="tabla-donantes" class="table table-sm table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Tipo</th>
+                                    <th>NIT/Doc</th>
+                                    <th>Teléfono</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-donaciones" class="section">
+            <h2 class="section-title">Donaciones</h2>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-3">Registrar donación</h6>
+                    <form id="form-donacion">
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Donante</label>
+                                <select id="don-donante" class="form-select form-select-sm" required>
+                                    <option value="">Seleccione donante</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Total ítems</label>
+                                <input id="don-items" type="number" min="1" class="form-control form-control-sm"
+                                    required placeholder="Ej: 10" />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Registrar</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-3">Listado de donaciones</h6>
+                    <div class="table-responsive">
+                        <table id="tabla-donaciones" class="table table-sm table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Fecha</th>
+                                    <th>Donante</th>
+                                    <th>Tipo donante</th>
+                                    <th>Total ítems</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-beneficiarios" class="section">
+            <h2 class="section-title">Beneficiarios</h2>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-3">Registrar beneficiario</h6>
+                    <form id="form-beneficiario">
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-2">
+                                <label class="form-label">Nombre</label>
+                                <input id="b-nombre" type="text" class="form-control form-control-sm" required />
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Apellido</label>
+                                <input id="b-apellido" type="text" class="form-control form-control-sm" required />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Número de documento</label>
+                                <input id="b-documento" type="text" class="form-control form-control-sm" required />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Nivel de vulnerabilidad</label>
+                                <select id="b-vulnerabilidad" class="form-select form-select-sm" required>
+                                    <option value="">Seleccione</option>
+                                    <option value="ALTO">Alto</option>
+                                    <option value="MEDIO">Medio</option>
+                                    <option value="BAJO">Bajo</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Integrantes</label>
+                                <input id="b-integrantes" type="number" min="1" class="form-control form-control-sm"
+                                    required />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Registrar</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-3">Listado de beneficiarios</h6>
+                    <div class="table-responsive">
+                        <table id="tabla-beneficiarios" class="table table-sm table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Documento</th>
+                                    <th>Vulnerabilidad</th>
+                                    <th>Integrantes</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-trabajadores" class="section">
+            <h2 class="section-title">Trabajadores Sociales</h2>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-3">Registrar trabajador</h6>
+                    <form id="form-trabajador">
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Nombre</label>
+                                <input id="t-nombre" type="text" class="form-control form-control-sm" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Cargo</label>
+                                <input id="t-cargo" type="text" class="form-control form-control-sm" required
+                                    placeholder="Ej: Coordinador" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Correo</label>
+                                <input id="t-correo" type="email" class="form-control form-control-sm" required />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Registrar</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-3">Listado de trabajadores</h6>
+                    <div class="table-responsive">
+                        <table id="tabla-trabajadores" class="table table-sm table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Cargo</th>
+                                    <th>Correo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-entregas" class="section">
+            <h2 class="section-title">Entregas de Ayuda</h2>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-3">Registrar entrega</h6>
+                    <form id="form-entrega">
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Beneficiario</label>
+                                <select id="e-beneficiario" class="form-select form-select-sm" required>
+                                    <option value="">Seleccione beneficiario</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Trabajador social</label>
+                                <select id="e-trabajador" class="form-select form-select-sm" required>
+                                    <option value="">Seleccione trabajador</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Observaciones</label>
+                                <input id="e-observaciones" type="text" class="form-control form-control-sm"
+                                    placeholder="Opcional" />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Registrar</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase mb-3">Listado de entregas</h6>
+                    <div class="table-responsive">
+                        <table id="tabla-entregas" class="table table-sm table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Fecha</th>
+                                    <th>Beneficiario</th>
+                                    <th>Vulnerabilidad</th>
+                                    <th>Trabajador</th>
+                                    <th>Observaciones</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center text-muted py-3">
+        <small>Banco de Alimentos &copy; 2026 - subgrupo11</small>
+    </footer>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/alimentos.js"></script>
+    <script src="js/donantes.js"></script>
+    <script src="js/donaciones.js"></script>
+    <script src="js/beneficiarios.js"></script>
+    <script src="js/trabajadores.js"></script>
+    <script src="js/entregas.js"></script>
+    <script>
+        function mostrarSeccion(nombre, btn) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(`sec-${nombre}`).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        cargarAlimentos();
+        cargarDonantes();
+        cargarDonaciones();
+        cargarBeneficiarios();
+        cargarTrabajadores();
+        cargarEntregas();
+        cargarSelectDonantes();
+        cargarSelectsBeneficiariosTrabajadores();
+    </script>
+
+</body>
+
+</html>
