@@ -125,7 +125,8 @@
                                     placeholder="Opcional" />
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-sm">Registrar</button>
+                        <button type="submit" id="btn-donante" class="btn btn-primary btn-sm">Registrar</button>
+                        <button type="button" id="btn-cancelar-donante" class="btn btn-secondary btn-sm d-none ms-2" onclick="cancelarDonante()">Cancelar</button>
                     </form>
                 </div>
             </div>
@@ -230,11 +231,18 @@
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">Integrantes</label>
-                                <input id="b-integrantes" type="number" min="1" class="form-control form-control-sm"
-                                    required />
+                                <input id="b-integrantes" type="number" min="1" class="form-control form-control-sm" required />
+                            </div>
+                            <div class="col-md-2 d-none">
+                                <label id="label-estado" class="form-label d-none">Estado</label>
+                                <select id="b-estado" class="form-select form-select-sm d-none">
+                                    <option value="ACTIVO">Activo</option>
+                                    <option value="INACTIVO">Inactivo</option>
+                                </select>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-sm">Registrar</button>
+                        <button type="submit" id="btn-beneficiario" class="btn btn-primary btn-sm">Registrar</button>
+                        <button type="button" id="btn-cancelar-beneficiario" class="btn btn-secondary btn-sm d-none ms-2" onclick="cancelarBeneficiario()">Cancelar</button>
                     </form>
                 </div>
             </div>
